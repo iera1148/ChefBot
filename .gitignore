@@ -1,0 +1,5 @@
+app.env
+instance/*.db
+__pycache__/
+*.pyc
+.DS_Store

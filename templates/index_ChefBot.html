@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChefBot Elite - Home</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&family=Quicksand:wght@400;700&display=swap">
+    <style>
+        :root {
+            --primary: #FF8C42;
+            --secondary: #FF6B6B;
+            --accent: #4ECDC4;
+            --glass: rgba(255, 255, 255, 0.85);
+        }
+
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background: linear-gradient(135deg, #fdfcfb 0%, #e2d1c3 100%);
+            margin: 0; min-height: 100vh; overflow-x: hidden;
+        }
+
+        /* Floating Background Emojis */
+        .bg-emoji {
+            position: fixed; font-size: 1.5rem; opacity: 0.1; z-index: -1;
+            animation: float 15s infinite linear;
+        }
+        @keyframes float {
+            0% { transform: translateY(110vh) rotate(0deg); }
+            100% { transform: translateY(-10vh) rotate(360deg); }
+        }
+
+        /* Banner & Slider */
+        .banner { width: 100%; max-width: 1000px; margin: 20px auto; display: block; border-radius: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+
+        .food-slider {
+            width: 100%; overflow: hidden; background: white; padding: 10px 0; margin-bottom: 20px;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
+        }
+        .slide-track { display: flex; width: calc(150px * 10); animation: scroll 20s linear infinite; }
+        .slide-track span { width: 150px; font-size: 2rem; text-align: center; }
+        @keyframes scroll { 0% { transform: translateX(0); } 100% { transform: translateX(calc(-150px * 5)); } }
+
+        /* Main Layout */
+        .main-layout {
+            display: grid; grid-template-columns: 1fr 380px;
+            gap: 25px; max-width: 1250px; margin: 0 auto; padding: 0 20px 40px;
+        }
+
+        .glass-card {
+            background: var(--glass); backdrop-filter: blur(15px);
+            border-radius: 30px; border: 1px solid rgba(255,255,255,0.5);
+            padding: 25px; box-shadow: 0 15px 35px rgba(0,0,0,0.05);
+        }
+
+        /* --- CHATBOT (MAIN) --- */
+        .chat-section { height: 750px; display: flex; flex-direction: column; }
+        .chat-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .chat-box { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; padding-right: 10px; }
+        .msg { padding: 12px 18px; border-radius: 20px; font-size: 15px; max-width: 80%; animation: pop 0.3s ease; }
+        @keyframes pop { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .bot { background: white; align-self: flex-start; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .user { background: var(--primary); color: white; align-self: flex-end; }
+
+        .input-area { display: flex; gap: 10px; margin-top: 20px; background: white; padding: 10px; border-radius: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        input { flex: 1; border: none; outline: none; padding-left: 10px; font-size: 15px; }
+        .btn-send { background: var(--primary); color: white; border: none; padding: 10px 25px; border-radius: 15px; cursor: pointer; font-family: 'Fredoka'; transition: 0.3s; }
+        .btn-send:hover { transform: scale(1.05); filter: brightness(1.1); }
+
+        /* --- SIDEBAR GAMES --- */
+        .side-games { display: flex; flex-direction: column; gap: 20px; }
+        .game-card { padding: 20px; text-align: center; }
+        .game-card h3 { font-family: 'Fredoka'; font-size: 1.2rem; color: var(--secondary); margin: 0 0 12px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+
+        /* Game 1: Chef Catch */
+        #catch-box { height: 100px; background: #fff; border-radius: 15px; position: relative; overflow: hidden; border: 2px dashed #ddd; margin-bottom: 10px; cursor: pointer; }
+        .target-emoji { position: absolute; font-size: 2rem; cursor: pointer; transition: 0.1s; }
+
+        /* Game 2: Memory */
+        .memory-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 10px; }
+        .m-card { height: 50px; background: var(--accent); border-radius: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: transparent; transition: 0.3s; }
+        .m-card.flipped { color: white; background: var(--secondary); transform: rotateY(180deg); }
+        .m-card.matched { background: #d4edda; color: #28a745; cursor: default; }
+
+        /* Game 3: Scramble */
+        .scramble-text { font-size: 1.4rem; font-weight: bold; color: var(--primary); margin: 10px 0; letter-spacing: 3px; }
+
+        .correct-flash { animation: flash 0.5s; }
+        @keyframes flash { 50% { background: #d4edda; } }
+    </style>
+</head>
+<body>
+
+    <div class="bg-emoji" style="left: 5%; animation-delay: 0s;">🍅</div>
+    <div class="bg-emoji" style="left: 25%; animation-delay: 5s;">🥑</div>
+    <div class="bg-emoji" style="left: 55%; animation-delay: 2s;">🥕</div>
+    <div class="bg-emoji" style="left: 85%; animation-delay: 7s;">🍤</div>
+
+    <img src="../static/icons/Chef_Bot1.jpg" class="banner" alt="ChefBot Banner">
+
+    <div class="food-slider">
+        <div class="slide-track">
+            <span>🥘</span><span>🍱</span><span>🥟</span><span>🍝</span><span>🥙</span><span>🍣</span><span>🍕</span><span>🥪</span><span>🍜</span><span>🥗</span>
+        </div>
+    </div>
+
+    <div class="main-layout">
+        <div class="glass-card chat-section">
+            <div class="chat-header">
+                <h2 style="font-family:'Fredoka'; margin:0;">👨‍🍳 ChefBot Assistant</h2>
+                <span style="font-weight:bold; color:var(--primary); font-size: 1.2rem;">🌟 <span id="xp-val">0</span> XP</span>
+            </div>
+            <div class="chat-box" id="chat-box">
+                <div class="msg bot">Hai! Saya ChefBot. Ada apa-apa yang boleh saya bantu untuk masakan hari ni? 😊</div>
+            </div>
+            <div class="input-area">
+                <input type="text" id="user-input" placeholder="Tanya tentang resepi atau tips...">
+                <button class="btn-send" onclick="sendMessage()">Hantar 🚀</button>
+            </div>
+        </div>
+
+        <div class="side-games">
+            <div class="glass-card game-card">
+                <h3>🍎 Chef Catch</h3>
+                <p style="font-size: 12px; margin-bottom: 8px;">Tangkap buah/sayur yang muncul!</p>
+                <div id="catch-box" onclick="catchEmoji()">
+                    <span id="game-emoji" class="target-emoji" style="top:20px; left:40%;">🍎</span>
+                </div>
+                <button class="btn-send" style="width:100%;" onclick="startCatchGame()">Mula Tangkap</button>
+            </div>
+
+            <div class="glass-card game-card">
+                <h3>🧠 Rasa Memory</h3>
+                <div class="memory-grid" id="memory-board"></div>
+                <button class="btn-send" style="width:100%; margin-top:10px; background:var(--accent);" onclick="initMemory()">Reset Memory</button>
+            </div>
+
+            <div class="glass-card game-card">
+                <h3>🔠 Bahan Misteri</h3>
+                <div class="scramble-text" id="scramble-txt">? ? ?</div>
+                <input type="text" id="scramble-in" placeholder="Eja di sini..." style="width:85%; margin-bottom:10px; border-radius:10px; border:1px solid #ddd; padding:8px;">
+                <button class="btn-send" style="width:100%; background:var(--secondary);" onclick="checkScramble()">Semak</button>
+            </div>
+        </div>
+    </div>
+
+    <audio id="snd-success" src="https://assets.mixkit.co/active_storage/sfx/2000/2000-preview.mp3"></audio>
+    <audio id="snd-click" src="https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3"></audio>
+
+    <script>
+        function playSnd(id) {
+            const s = document.getElementById(id);
+            s.currentTime = 0; s.play().catch(e => {});
+        }
+
+        // --- CHAT LOGIC ---
+        async function sendMessage() {
+            const input = document.getElementById("user-input");
+            const box = document.getElementById("chat-box");
+            if(!input.value) return;
+
+            playSnd('snd-click');
+            const msg = input.value;
+            box.innerHTML += `<div class="msg user">${msg}</div>`;
+            input.value = "";
+            box.scrollTop = box.scrollHeight;
+
+            const res = await fetch("/chat", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({message: msg})
+            });
+            const data = await res.json();
+            box.innerHTML += `<div class="msg bot">${data.response}</div>`;
+            document.getElementById("xp-val").innerText = data.points;
+            box.scrollTop = box.scrollHeight;
+        }
+
+        // --- GAME 1: CHEF CATCH ---
+        let catchInterval;
+        const emojis = ['🍎','🥦','🍄','🍋','🍇','🌽','🌶️','🍆'];
+        function startCatchGame() {
+            clearInterval(catchInterval);
+            moveEmoji();
+            catchInterval = setInterval(moveEmoji, 1000);
+        }
+        function moveEmoji() {
+            const el = document.getElementById("game-emoji");
+            const x = Math.random() * 80;
+            const y = Math.random() * 60;
+            el.style.left = x + "%";
+            el.style.top = y + "px";
+            el.innerText = emojis[Math.floor(Math.random()*emojis.length)];
+        }
+        function catchEmoji() {
+            playSnd('snd-success');
+            awardXP(5);
+            moveEmoji();
+            clearInterval(catchInterval);
+            catchInterval = setInterval(moveEmoji, 900); // Semakin laju
+        }
+
+        // --- GAME 2: RASA MEMORY ---
+        const memoryIcons = ['🥥','🍤','🍗','🥬','🌶️','🌽','🥔','🍋'];
+        let flippedCards = [];
+        function initMemory() {
+            const board = document.getElementById("memory-board");
+            board.innerHTML = "";
+            flippedCards = [];
+            const cards = [...memoryIcons, ...memoryIcons].sort(() => 0.5 - Math.random());
+            cards.forEach(icon => {
+                const div = document.createElement("div");
+                div.className = "m-card";
+                div.dataset.icon = icon;
+                div.innerText = icon;
+                div.onclick = function() {
+                    if(this.classList.contains('flipped') || this.classList.contains('matched') || flippedCards.length === 2) return;
+                    this.classList.add('flipped');
+                    flippedCards.push(this);
+                    if(flippedCards.length === 2) {
+                        if(flippedCards[0].dataset.icon === flippedCards[1].dataset.icon) {
+                            flippedCards.forEach(c => c.classList.add('matched'));
+                            playSnd('snd-success');
+                            awardXP(20);
+                            flippedCards = [];
+                        } else {
+                            setTimeout(() => {
+                                flippedCards.forEach(c => c.classList.remove('flipped'));
+                                flippedCards = [];
+                            }, 700);
+                        }
+                    }
+                };
+                board.appendChild(div);
+            });
+        }
+
+        // --- GAME 3: SCRAMBLE ---
+        let secretWord = "";
+        const scrambleWords = ["SANTAN", "BELACAN", "KUNYIT", "SERAI", "HALIA", "LENGKUAS", "RENDANG"];
+        function loadScramble() {
+            secretWord = scrambleWords[Math.floor(Math.random()*scrambleWords.length)];
+            let sc = secretWord.split('').sort(() => 0.5 - Math.random()).join(' ');
+            document.getElementById("scramble-txt").innerText = sc;
+        }
+        function checkScramble() {
+            const val = document.getElementById("scramble-in").value.toUpperCase();
+            if(val === secretWord) {
+                playSnd('snd-success');
+                awardXP(15);
+                document.getElementById("scramble-in").value = "";
+                loadScramble();
+            } else {
+                alert("Salah! Cuba lagi 🥘");
+            }
+        }
+
+        async function awardXP(amt) {
+            const res = await fetch("/award_points", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({points: amt})
+            });
+            const data = await res.json();
+            document.getElementById("xp-val").innerText = data.new_points;
+        }
+
+        // Init all
+        initMemory();
+        loadScramble();
+    </script>
+</body>
+</html>
